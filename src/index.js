@@ -11,6 +11,7 @@ const start = async () => {
 		}
 
 		console.log(result.body)
+
 		return
 	} catch (err) {
 		console.log(`Error in start func: ${err}`)
