@@ -12,18 +12,18 @@ export const getCookie = async (accountName, password, authCode, captcha) => {
 			async (err, sessionID, cookies, steamguard) => {
 				if (err) {
 					if (err.message == 'SteamGuardMobile') {
-						await rl.question('Steam Authenticator Code: ', async (code) => {
-							await getCookie(accountName, password, code)
-						})
+						const code = await rl.question('Steam Authenticator Code: ')
+
+						await getCookie(accountName, password, code)
 
 						return
 					}
 
 					if (err.message == 'CAPTCHA') {
 						console.log(err.captchaurl)
-						await rl.question('CAPTCHA: ', async (captchaInput) => {
-							await getCookie(accountName, password, code, captchaInput)
-						})
+						const captchaInput = await rl.question('CAPTCHA: ')
+
+						await getCookie(accountName, password, code, captchaInput)
 
 						return
 					}
@@ -45,6 +45,8 @@ export const getHistory = async () => {
 	try {
 		const cookie = cache.get('cookie')
 
+		if (!cookie) return { success: false }
+
 		const itemName = 'Glock-18 | Dragon Tattoo (Factory New)'
 
 		const res = await got({
@@ -61,11 +63,9 @@ export const getHistory = async () => {
 			}
 		})
 
-		if (res.success) {
-			return { success: true, body: res }
-		} else {
-			return { success: false }
-		}
+		if (!res.success) return { success: false }
+
+		return { success: true, body: res }
 	} catch (err) {
 		console.log(`Error in getHistory func: ${err}`)
 	}
